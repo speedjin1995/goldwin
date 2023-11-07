@@ -30,13 +30,16 @@ else{
 			<div class="col-12">
 				<div class="card">
 					<div class="card-header">
-              <div class="row">
-                  <div class="col-9"></div>
-                  <div class="col-3">
-                      <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="addSuppliers">Add Suppliers</button>
-                  </div>
-              </div>
-          </div>
+                        <div class="row">
+                            <div class="col-9"></div>
+                            <div class="col-3">
+                                <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="addSuppliers">
+                                    <i class="fas fa-plus"></i>  
+                                    Add Suppliers
+                                </button>
+                            </div>
+                        </div>
+                    </div>
 					<div class="card-body">
 						<table id="supplierTable" class="table table-bordered table-striped">
 							<thead>

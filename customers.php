@@ -29,11 +29,11 @@ else{
         <div class="row">
 			<div class="col-12">
 				<div class="card">
-					<div class="card-header" style="background-color: #1360a8;">
+					<div class="card-header">
                         <div class="row">
                             <div class="col-9"></div>
                             <div class="col-3">
-                                <button type="button" class="btn btn-block btn-sm" id="addCustomers" style="background-color: #75c251;">
+                                <button type="button" class="btn btn-block btn-sm" id="addCustomers">
                                     <i class="fas fa-plus"></i>
                                     Add Customers
                                 </button>
@@ -42,7 +42,7 @@ else{
                     </div>
 					<div class="card-body">
 						<table id="customerTable" class="table table-bordered table-striped">
-							<thead style="background-color: #1360a8;">
+							<thead>
 								<tr>
                                     <th>Code</th>
 									<th>Name</th>

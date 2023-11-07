@@ -33,7 +33,10 @@ else{
                         <div class="row">
                             <div class="col-9"></div>
                             <div class="col-3">
-                                <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="addVehicles">Add Vehicles</button>
+                                <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="addVehicles">
+                                    <i class="fas fa-plus"></i>      
+                                    Add Vehicles
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -43,7 +46,6 @@ else{
 								<tr>
 									<th>No.</th>
 									<th>Vehicle No</th>
-                                    <th>Vehicle Weight</th>
 									<th>Actions</th>
 								</tr>
 							</thead>
@@ -74,10 +76,6 @@ else{
     					<label for="vehicleNumber">Vehicles No. *</label>
     					<input type="type" class="form-control" name="vehicleNumber" id="vehicleNumber" placeholder="Enter Vehicle Number" required>
     				</div>
-                    <div class="form-group">
-    					<label for="vehicleWeight">Vehicles Weight. *</label>
-    					<input type="number" class="form-control" name="vehicleWeight" id="vehicleWeight" placeholder="Enter Vehicle Weight" required>
-    				</div>
     			</div>
             </div>
             <div class="modal-footer justify-content-between">
@@ -107,7 +105,6 @@ $(function () {
         'columns': [
             { data: 'counter' },
             { data: 'veh_number' },
-            { data: 'vehicleWeight' },
             { 
                 data: 'id',
                 render: function ( data, type, row ) {
@@ -130,11 +127,8 @@ $(function () {
                 if(obj.status === 'success'){
                     $('#vehicleModal').modal('hide');
                     toastr["success"](obj.message, "Success:");
-                    
-                    $.get('vehicles.php', function(data) {
-                        $('#mainContents').html(data);
-                        $('#spinnerLoading').hide();
-                    });
+                    $('#vehicleTable').DataTable().ajax.reload();
+                    $('#spinnerLoading').hide();
                 }
                 else if(obj.status === 'failed'){
                     toastr["error"](obj.message, "Failed:");
@@ -151,7 +145,6 @@ $(function () {
     $('#addVehicles').on('click', function(){
         $('#vehicleModal').find('#id').val("");
         $('#vehicleModal').find('#vehicleNumber').val("");
-        $('#vehicleModal').find('#vehicleWeight').val("");
         $('#vehicleModal').modal('show');
         
         $('#vehicleForm').validate({
@@ -178,7 +171,6 @@ function edit(id){
         if(obj.status === 'success'){
             $('#vehicleModal').find('#id').val(obj.message.id);
             $('#vehicleModal').find('#vehicleNumber').val(obj.message.veh_number);
-            $('#vehicleModal').find('#vehicleWeight').val(obj.message.vehicleWeight);
             $('#vehicleModal').modal('show');
             
             $('#vehicleForm').validate({
@@ -212,10 +204,8 @@ function deactivate(id){
         
         if(obj.status === 'success'){
             toastr["success"](obj.message, "Success:");
-            $.get('vehicles.php', function(data) {
-                $('#mainContents').html(data);
-                $('#spinnerLoading').hide();
-            });
+            $('#vehicleTable').DataTable().ajax.reload();
+            $('#spinnerLoading').hide();
         }
         else if(obj.status === 'failed'){
             toastr["error"](obj.message, "Failed:");
