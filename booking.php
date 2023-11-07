@@ -21,9 +21,11 @@ else{
 
   $customers = $db->query("SELECT * FROM customers WHERE deleted = '0'");
   $customers2 = $db->query("SELECT * FROM customers WHERE deleted = '0'");
-  $branch = $db->query("SELECT * FROM branch WHERE deleted = '0'");
-  $branch2 = $db->query("SELECT * FROM branch WHERE deleted = '0'");
+  $supplies = $db->query("SELECT * FROM supplies WHERE deleted = '0'");
+  $supplies2 = $db->query("SELECT * FROM supplies WHERE deleted = '0'");
   $users = $db->query("SELECT * FROM users WHERE deleted = '0'");
+  $transporters = $db->query("SELECT * FROM transporters WHERE deleted = '0'");
+  $vehicles = $db->query("SELECT * FROM vehicles WHERE deleted = '0'");
 }
 ?>
 
@@ -34,20 +36,6 @@ else{
     }
   }
 </style>
-
-<select class="form-control" style="width: 100%;" id="zoneHidden" style="display: none;">
-  <option value="" selected disabled hidden>Please Select</option>
-  <?php while($row3=mysqli_fetch_assoc($branch)){ ?>
-    <option value="<?=$row3['id'] ?>" data-index="<?=$row3['customer_id'] ?>"><?=$row3['name'] ?></option>
-  <?php } ?>
-</select>
-
-<select class="form-control" style="width: 100%;" id="branchHidden" style="display: none;">
-  <option value="" selected disabled hidden>Please Select</option>
-  <?php while($row2=mysqli_fetch_assoc($branch2)){ ?>
-    <option value="<?=$row2['id'] ?>"><?=$row2['address'] ?></option>
-  <?php } ?>
-</select>
 
 <div class="content-header">
   <div class="container-fluid">
@@ -89,23 +77,23 @@ else{
 
               <div class="col-3">
                 <div class="form-group">
-                  <label>Shipment Type</label>
-                  <select class="form-control" id="pickupMethod" name="pickupMethod">
+                  <label>Customer</label>
+                  <select class="form-control" id="customerNoFilter" name="customerNoFilter">
                     <option value="" selected disabled hidden>Please Select</option>
-                    <option value="SOS Pickup">SOS Pickup</option>
-                    <option value="Outstation Pickup">Outstation Pickup</option>
-                    <option value="Send By Own">Send By Own</option>
+                    <?php while($rowCustomer2=mysqli_fetch_assoc($customers2)){ ?>
+                      <option value="<?=$rowCustomer2['id'] ?>"><?=$rowCustomer2['customer_name'] ?></option>
+                    <?php } ?>
                   </select>
                 </div>
               </div>
 
               <div class="col-3">
                 <div class="form-group">
-                  <label>Customer No</label>
-                  <select class="form-control" id="customerNoFilter" name="customerNoFilter">
+                  <label>Partner</label>
+                  <select class="form-control" id="suppliesNoFilter" name="suppliesNoFilter">
                     <option value="" selected disabled hidden>Please Select</option>
-                    <?php while($rowCustomer2=mysqli_fetch_assoc($customers2)){ ?>
-                      <option value="<?=$rowCustomer2['id'] ?>"><?=$rowCustomer2['customer_name'] ?></option>
+                    <?php while($rowSupplies22=mysqli_fetch_assoc($supplies2)){ ?>
+                      <option value="<?=$rowSupplies22['id'] ?>"><?=$rowSupplies22['supplier_name'] ?></option>
                     <?php } ?>
                   </select>
                 </div>
@@ -131,13 +119,7 @@ else{
         <div class="card card-primary">
           <div class="card-header">
             <div class="row">
-              <div class="col-6">Booking</div>
-              <div class="col-3">
-                <button type="button" class="btn btn-block bg-gradient-info btn-sm" id="updateStatus">
-                  <i class="fas fa-pen"></i>
-                  Update Status
-                </button>
-              </div>
+              <div class="col-9">Booking</div>
               <div class="col-3">
                 <button type="button" class="btn btn-block bg-gradient-success btn-sm" id="newBooking">
                   <i class="fas fa-plus"></i>
@@ -151,13 +133,13 @@ else{
             <table id="weightTable" class="table table-bordered table-striped display">
               <thead>
                 <tr>
-                  <th></th>
                   <th>Customer</th>
-                  <th>Description</th>
-                  <th>Estimated Ctn</th>
-                  <th>Actual Ctn</th>
-                  <th>Pickup Method</th>
-                  <th></th>
+                  <th>From</th>
+                  <th>To</th>
+                  <th>Booking <br>Datetime</th>
+                  <th>Contact</th>
+                  <th>Partner</th>
+                  <!--th></th-->
                 </tr>
               </thead>
             </table>
@@ -185,17 +167,6 @@ else{
           <div class="row">
             <div class="col-4">
               <div class="form-group">
-                <label class="labelStatus">Pickup Method *</label>
-                <select class="form-control" id="pickup_method" name="pickup_method" required>
-                  <option value="" selected disabled hidden>Please Select</option>
-                  <option value="SOS Pickup">SOS Pickup</option>
-                  <option value="Outstation Pickup">Outstation Pickup</option>
-                  <option value="Send By Own">Send By Own</option>
-                </select>
-              </div>
-            </div>
-            <div class="col-4">
-              <div class="form-group">
                 <label class="labelStatus">Customer *</label>
                 <select class="form-control" id="customerNo" name="customerNo" required>
                   <option value="" selected disabled hidden>Please Select</option>
@@ -207,124 +178,25 @@ else{
             </div>
             <div class="col-4">
               <div class="form-group">
-                <label class="labelStatus">Branch </label>
-                <select class="form-control" id="branch" name="branch"></select>
+                <label class="labelStatus">Booking Date</label>
+                <div class="input-group date" id="bookingDatePicker" data-target-input="nearest">
+                  <input type="text" class="form-control datetimepicker-input" data-target="#bookingDatePicker" id="bookingDate" name="bookingDate"/>
+                  <div class="input-group-append" data-target="#bookingDatePicker" data-toggle="datetimepicker">
+                  <div class="input-group-text"><i class="fa fa-calendar"></i></div></div>
+                </div>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="form-group">
+                <label class="labelStatus">Booking Time</label>
+                <div class="input-group date" id="bookingTimePicker" data-target-input="nearest">
+                  <input type="text" class="form-control datetimepicker-input" data-target="#bookingTimePicker" id="bookingTime" name="bookingTime"/>
+                  <div class="input-group-append" data-target="#bookingTimePicker" data-toggle="datetimepicker">
+                  <div class="input-group-text"><i class="fa fa-clock"></i></div></div>
+                </div>
               </div>
             </div>
           </div>
-          <div class="row">
-            <div class="col-4">
-              <div class="form-group">
-                <label>Pickup Address </label>
-                <textarea class="form-control" id="address" name="address" placeholder="Enter your address"></textarea>
-              </div>
-            </div>
-            <div class="col-4">
-              <div class="form-group">
-                <label>Description</label>
-                <textarea class="form-control" id="description" name="description" placeholder="Enter your description"></textarea>
-              </div>
-            </div>
-            <div class="col-4">
-              <div class="form-group">
-                <label>Internal Notes</label>
-                <textarea class="form-control" id="internal_notes" name="internal_notes" placeholder="Enter Internal Notes"></textarea>
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="form-group col-2">
-              <label>Extimated Ctn *</label>
-              <input class="form-control" type="number" placeholder="Extimated Carton" id="extimated_ctn" name="extimated_ctn" min="0" required/>                        
-            </div>
-            <div class="form-group col-2">
-              <label>Actual Ctn</label>
-              <input class="form-control" type="number" placeholder="Actual Carton" id="actual_ctn" name="actual_ctn" min="0"/>                        
-            </div>
-            <div class="form-group col-4">
-              <label>Gate</label>
-              <input class="form-control" type="text" placeholder="Gate" id="gate" name="gate" />                        
-            </div>
-            <div class="form-group col-4">
-              <label>Checker</label>
-              <select class="form-control" id="checker" name="checker">
-                <option value="" selected disabled hidden>Please Select</option>
-                <?php while($rowUser=mysqli_fetch_assoc($users)){ ?>
-                  <option value="<?=$rowUser['id'] ?>"><?=$rowUser['name'] ?></option>
-                <?php } ?>
-              </select>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col-4">
-              <div class="form-group">
-                <label>Vehicle No</label>
-                <input class="form-control" type="text" placeholder="Vehicle No." id="vehicleNoTxt" name="vehicleNoTxt">
-              </div>
-            </div>
-            <div class="col-4">
-              <div class="form-group">
-                <label>Pickup Form Number</label>
-                <input class="form-control" type="text" placeholder="Pickup Form Number" id="form_no" name="form_no">
-              </div>
-            </div>
-            <div class="col-2">
-              <div class="form-group">
-                <label class="labelStatus">Col Goods</label>
-                <select class="form-control" id="col_goods" name="col_goods">
-                  <option value="Yes">Yes</option>
-                  <option value="No" selected>No</option>
-                </select>
-              </div>
-            </div>
-            <div class="col-2">
-              <div class="form-group">
-                <label class="labelStatus">Col Chq</label>
-                <select class="form-control" id="col_chk" name="col_chk">
-                  <option value="Yes">Yes</option>
-                  <option value="No"selected>No</option>
-                </select>
-              </div>
-            </div>
-          </div>  
-        </div>
-
-        <div class="modal-footer justify-content-between bg-gray-dark color-palette">
-          <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-          <button type="submit" class="btn btn-primary" id="saveButton">Save changes</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-
-<div class="modal fade" id="updateModal">
-  <div class="modal-dialog modal-xl" style="max-width: 50%;">
-    <div class="modal-content">
-
-      <form role="form" id="updateForm">
-        <div class="modal-header bg-gray-dark color-palette">
-          <h4 class="modal-title">Update Status</h4>
-          <button type="button" class="close bg-gray-dark color-palette" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-
-        <div class="modal-body">
-          <input type="hidden" class="form-control" id="id" name="id">
-          <div class="row">
-            <div class="col-6">
-              <div class="form-group">
-                <label>Status *</label>
-                <select class="form-control" id="status" name="status">
-                  <option value="" selected disabled hidden>Please Select</option>
-                  <option value="Picked">Picked</option>
-                  <option value="Invoiced">Invoiced</option>
-                </select>
-              </div>
-            </div>
-          </div>  
         </div>
 
         <div class="modal-footer justify-content-between bg-gray-dark color-palette">
@@ -338,9 +210,6 @@ else{
 
 <script>
 $(function () {
-  $("#zoneHidden").hide();
-  $("#branchHidden").hide();
-
   var table = $("#weightTable").DataTable({
     "responsive": true,
     "autoWidth": false,
@@ -353,28 +222,38 @@ $(function () {
       'url':'php/loadBooking.php'
     },
     'columns': [
+      { data: 'customer_name' },
+      { data: 'from_place' },
+      { data: 'to_place' },
       {
-        // Add a checkbox with a unique ID for each row
-        data: 'id', // Assuming 'serialNo' is a unique identifier for each row
-        className: 'select-checkbox',
-        orderable: false,
-        render: function (data, type, row) {
-          return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
+        data: null,
+        render: function(data, type, row) {
+          if (type === 'display') {
+            return row.booking_date + '<br>' + row.booking_time;
+          }
+          
+          return row.booking_date + ' ' + row.booking_time;
         }
       },
-      { data: 'customer_name' },
-      { data: 'description' },
-      { data: 'estimated_ctn' },
-      { data: 'actual_ctn' },
-      { data: 'pickup_method' },
-      { 
+      {
+        data: null,
+        render: function(data, type, row) {
+          if (type === 'display') {
+            return row.contact_person + '<br>' + row.contact_number;
+          }
+
+          return row.contact_person + ' ' + row.contact_number;
+        }
+      },
+      { data: 'suplier_name' },
+      /*{ 
         className: 'dt-control',
         orderable: false,
         data: null,
         render: function ( data, type, row ) {
           return '<td class="table-elipse" data-toggle="collapse" data-target="#demo'+row.serialNo+'"><i class="fas fa-angle-down"></i></td>';
         }
-      }
+      }*/
     ],
     "rowCallback": function( row, data, index ) {
       //$('td', row).css('background-color', '#E6E6FA');
