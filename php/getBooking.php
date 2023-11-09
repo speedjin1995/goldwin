@@ -23,21 +23,20 @@ if(isset($_POST['userID'])){
             
             if ($row = $result->fetch_assoc()) {
                 $message["id"]=$row['id'];
-                $message["pickup_method"]=$row['pickup_method'];
+                $message["from_place"]=$row['from_place'];
+                $message["to_place"]=$row['to_place'];
                 $message["customer"]=$row['customer'];
-                $message["branch"]=$row['branch'];
-                $message["pickup_location"]=$row['pickup_location'];
-                $message["description"]=$row['description'];
-                $message["internal_notes"]=$row['internal_notes'];
-                $message["estimated_ctn"]=$row['estimated_ctn'];
-                $message["actual_ctn"]=$row['actual_ctn'];
-                $message["vehicle_no"]=$row['vehicle_no'];
-                $message["col_goods"]=$row['col_goods'];
-                $message["col_chq"]=$row['col_chq'];
-                $message["form_no"]=$row['form_no'];
-                $message["gate"]=$row['gate'];
-                $message["checker"]=$row['checker'];
-                $message["status"]=$row['status'];
+                $message["booking_date"] = DateTime::createFromFormat('Y-m-d', $row['booking_date'])->format('d/m/Y');
+                $message["booking_time"] = DateTime::createFromFormat('H:i:s', $row['booking_time'])->format('H:i A');
+                $message["contact_person"]=$row['contact_person'];
+                $message["contact_number"]=$row['contact_number'];
+                $message["number_of_person"]=$row['number_of_person'];
+                $message["supplier"]=$row['supplier'];
+                $message["driver"]=$row['driver'];
+                $message["vehicles"]=$row['vehicles'];
+                $message["created_datetime"]=$row['created_datetime'];
+                $message["pickup_datetime"]=$row['pickup_datetime'];
+                $message["completed_datetime"]=$row['completed_datetime'];
             }
             
             echo json_encode(

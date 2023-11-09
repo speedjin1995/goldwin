@@ -68,7 +68,7 @@ while($row = mysqli_fetch_assoc($empRecords)) {
         $result2 = $update_stmt2->get_result();
         
         if ($row2 = $result2->fetch_assoc()) {
-          $vehicles_no = $row2['transporter_name'];
+          $drivers_name = $row2['transporter_name'];
         }
       }
     }

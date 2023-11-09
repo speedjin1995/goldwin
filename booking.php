@@ -134,12 +134,12 @@ else{
               <thead>
                 <tr>
                   <th>Customer</th>
-                  <th>From</th>
-                  <th>To</th>
+                  <th>From &<br>To</th>
                   <th>Booking <br>Datetime</th>
                   <th>Contact</th>
                   <th>Partner</th>
-                  <!--th></th-->
+                  <th>Driver &<br>Vehicles No.</th>
+                  <th></th>
                 </tr>
               </thead>
             </table>
@@ -178,9 +178,9 @@ else{
             </div>
             <div class="col-4">
               <div class="form-group">
-                <label class="labelStatus">Booking Date</label>
+                <label class="labelStatus">Booking Date *</label>
                 <div class="input-group date" id="bookingDatePicker" data-target-input="nearest">
-                  <input type="text" class="form-control datetimepicker-input" data-target="#bookingDatePicker" id="bookingDate" name="bookingDate"/>
+                  <input type="text" class="form-control datetimepicker-input" data-target="#bookingDatePicker" id="bookingDate" name="bookingDate" required/>
                   <div class="input-group-append" data-target="#bookingDatePicker" data-toggle="datetimepicker">
                   <div class="input-group-text"><i class="fa fa-calendar"></i></div></div>
                 </div>
@@ -188,12 +188,79 @@ else{
             </div>
             <div class="col-4">
               <div class="form-group">
-                <label class="labelStatus">Booking Time</label>
+                <label class="labelStatus">Booking Time *</label>
                 <div class="input-group date" id="bookingTimePicker" data-target-input="nearest">
-                  <input type="text" class="form-control datetimepicker-input" data-target="#bookingTimePicker" id="bookingTime" name="bookingTime"/>
+                  <input type="text" class="form-control datetimepicker-input" data-target="#bookingTimePicker" id="bookingTime" name="bookingTime" required/>
                   <div class="input-group-append" data-target="#bookingTimePicker" data-toggle="datetimepicker">
                   <div class="input-group-text"><i class="fa fa-clock"></i></div></div>
                 </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-4">
+              <div class="form-group">
+                <label>From *</label>
+                <textarea class="form-control" id="fromAddress" name="fromAddress" placeholder="Enter your origin address" required></textarea>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="form-group">
+                <label>To *</label>
+                <textarea class="form-control" id="toAddress" name="toAddress" placeholder="Enter your destination address" required></textarea>
+              </div>
+            </div>
+            <div class="form-group col-4">
+              <label>Number of People *</label>
+              <input class="form-control" type="number" placeholder="Number of people" id="numberOfPeople" name="numberOfPeople" min="0" step="1" required/>                        
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-4">
+              <div class="form-group">
+                <label>Contact Person</label>
+                <input class="form-control" type="text" placeholder="Contact Person" id="contactPerson" name="contactPerson"/>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="form-group">
+                <label>Contact Number</label>
+                <input class="form-control" type="text" placeholder="Contact Number" id="contactNumber" name="contactNumber"/>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="form-group">
+                <label class="labelStatus">Partner</label>
+                <select class="form-control" id="supplierNo" name="supplierNo">
+                  <option value="" selected disabled hidden>Please Select</option>
+                  <?php while($rowSupplies=mysqli_fetch_assoc($supplies)){ ?>
+                    <option value="<?=$rowSupplies['id'] ?>"><?=$rowSupplies['supplier_name'] ?></option>
+                  <?php } ?>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-4">
+              <div class="form-group">
+                <label>Driver</label>
+                <select class="form-control" id="driverNo" name="driverNo">
+                  <option value="" selected disabled hidden>Please Select</option>
+                  <?php while($rowDriver=mysqli_fetch_assoc($transporters)){ ?>
+                    <option value="<?=$rowDriver['id'] ?>"><?=$rowDriver['transporter_name'] ?></option>
+                  <?php } ?>
+                </select>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="form-group">
+                <label>Vehicle</label>
+                <select class="form-control" id="vehicleNo" name="vehicleNo">
+                  <option value="" selected disabled hidden>Please Select</option>
+                  <?php while($rowVeh=mysqli_fetch_assoc($vehicles)){ ?>
+                    <option value="<?=$rowVeh['id'] ?>"><?=$rowVeh['veh_number'] ?></option>
+                  <?php } ?>
+                </select>
               </div>
             </div>
           </div>
@@ -216,15 +283,23 @@ $(function () {
     'processing': true,
     'serverSide': true,
     'serverMethod': 'post',
-    'order': [[ 1, 'asc' ]],
+    'order': [[ 0, 'asc' ]],
     'columnDefs': [ { orderable: false, targets: [0] }],
     'ajax': {
       'url':'php/loadBooking.php'
     },
     'columns': [
       { data: 'customer_name' },
-      { data: 'from_place' },
-      { data: 'to_place' },
+      {
+        data: null,
+        render: function(data, type, row) {
+          if (type === 'display') {
+            return 'From: ' + row.from_place + '<br>To: ' + row.to_place;
+          }
+          
+          return row.from_place + ' ' + row.to_place;
+        }
+      },
       {
         data: null,
         render: function(data, type, row) {
@@ -246,14 +321,34 @@ $(function () {
         }
       },
       { data: 'suplier_name' },
-      /*{ 
-        className: 'dt-control',
-        orderable: false,
+      {
         data: null,
-        render: function ( data, type, row ) {
-          return '<td class="table-elipse" data-toggle="collapse" data-target="#demo'+row.serialNo+'"><i class="fas fa-angle-down"></i></td>';
+        render: function(data, type, row) {
+          if (type === 'display') {
+            return row.drivers_name + '<br>' + row.vehicles_no;
+          }
+
+          return row.drivers_name + ' ' + row.vehicles_no;
         }
-      }*/
+      },
+      {
+        data: 'id',
+        render: function (data, type, row) {
+          var buttonsHtml = '<div class="row">';
+          
+          if (row['pickup_datetime'] == null && row['completed_datetime'] == null) {
+            buttonsHtml += '<div class="col-3"><button type="button" id="edit' + data + '" onclick="edit(' + data + ')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div>';
+            buttonsHtml += '<div class="col-3"><button type="button" id="pickup' + data + '" onclick="picked(' + data + ')" class="btn btn-info btn-sm"><i class="fas fa-car"></i></button></div>';
+            buttonsHtml += '<div class="col-3"><button type="button" id="deactivate' + data + '" onclick="deactivate(' + data + ')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></div>';
+          }
+          else if (row['completed_datetime'] == null) {
+            buttonsHtml += '<div class="col-3"><button type="button" id="complete' + data + '" onclick="invoice(' + data + ')" class="btn btn-success btn-sm"><i class="fas fa-check"></i></button></div>';
+          }
+
+          buttonsHtml += '</div>';
+          return buttonsHtml;
+        }
+      }
     ],
     "rowCallback": function( row, data, index ) {
       //$('td', row).css('background-color', '#E6E6FA');
@@ -276,14 +371,26 @@ $(function () {
 
   //Date picker
   $('#fromDatePicker').datetimepicker({
-      icons: { time: 'far fa-clock' },
+      icons: { time: 'far fa-calendar' },
       format: 'DD/MM/YYYY HH:mm:ss A',
       defaultDate: new Date
   });
 
   $('#toDatePicker').datetimepicker({
-      icons: { time: 'far fa-clock' },
+      icons: { time: 'far fa-calendar' },
       format: 'DD/MM/YYYY HH:mm:ss A',
+      defaultDate: new Date
+  });
+
+  $('#bookingDatePicker').datetimepicker({
+      icons: { time: 'far fa-calendar' },
+      format: 'DD/MM/YYYY',
+      defaultDate: new Date
+  });
+
+  $('#bookingTimePicker').datetimepicker({
+      icons: { time: 'far fa-clock' },
+      format: 'HH:mm A',
       defaultDate: new Date
   });
 
@@ -308,77 +415,23 @@ $(function () {
           $('#spinnerLoading').hide();
         });
       }
-      else if($('#updateModal').hasClass('show')){
-        $('#spinnerLoading').show();
-        $.post('php/updateBooking.php', $('#updateForm').serialize(), function(data){
-          var obj = JSON.parse(data); 
-          if(obj.status === 'success'){
-            $('#updateModal').modal('hide');
-            toastr["success"](obj.message, "Success:");
-            $('#weightTable').DataTable().ajax.reload();
-          }
-          else if(obj.status === 'failed'){
-            toastr["error"](obj.message, "Failed:");
-          }
-          else{
-            toastr["error"]("Something wrong when edit", "Failed:");
-          }
-
-          $('#spinnerLoading').hide();
-        });
-      }
-    }
-  });
-
-  $("#updateStatus").on("click", function () {
-    var selectedIds = []; // An array to store the selected 'id' values
-
-    $("#weightTable tbody input[type='checkbox']").each(function () {
-      if (this.checked) {
-        selectedIds.push($(this).val());
-      }
-    });
-
-    if (selectedIds.length > 0) {
-      $("#updateModal").find('#id').val(selectedIds);
-      $("#updateModal").find('#status').val('');
-      $("#updateModal").modal("show");
-
-      $('#updateForm').validate({
-        errorElement: 'span',
-        errorPlacement: function (error, element) {
-          error.addClass('invalid-feedback');
-          element.closest('.form-group').append(error);
-        },
-        highlight: function (element, errorClass, validClass) {
-          $(element).addClass('is-invalid');
-        },
-        unhighlight: function (element, errorClass, validClass) {
-          $(element).removeClass('is-invalid');
-        }
-      });
-    } else {
-      // Optionally, you can display a message or take another action if no IDs are selected
-      alert("Please select at least one DO to update.");
     }
   });
 
   $('#newBooking').on('click', function(){
     $('#extendModal').find('#id').val("");
-    $('#extendModal').find('#pickup_method').val("");
+    $('#extendModal').find('#bookingDate').val(formatDate(new Date));
     $('#extendModal').find('#customerNo').val("");
-    $('#extendModal').find('#branch').val("");
-    $('#extendModal').find('#address').val("");
-    $('#extendModal').find('#description').val("");
-    $('#extendModal').find('#internal_notes').val("");
-    $('#extendModal').find('#extimated_ctn').val("");
-    $('#extendModal').find('#actual_ctn').val("");
-    $('#extendModal').find('#gate').val("");
-    $('#extendModal').find('#checker').val("");
-    $('#extendModal').find('#vehicleNoTxt').val("");
-    $('#extendModal').find('#form_no').val("");
-    $('#extendModal').find('#col_goods').val("No");
-    $('#extendModal').find('#col_chk').val("No");
+    $('#extendModal').find('#bookingTime').val(formatTime(new Date));
+    $('#extendModal').find('#fromAddress').val("");
+    $('#extendModal').find('#toAddress').val("");
+    $('#extendModal').find('#numberOfPeople').val("1");
+    $('#extendModal').find('#contactPerson').val("");
+    $('#extendModal').find('#contactNumber').val("");
+    $('#extendModal').find('#supplierNo').val("");
+    $('#extendModal').find('#driverNo').val("");
+    $('#extendModal').find('#vehicleNo').val("");
+
     $('#extendModal').modal('show');
     
     $('#extendForm').validate({
@@ -394,38 +447,6 @@ $(function () {
         $(element).removeClass('is-invalid');
       }
     });
-  });
-  
-  $('#customerNo').on('change', function(){
-    $('#branch').empty();
-    var dataIndexToMatch = $(this).val();
-    $('#branch').append('<option value="0" data-index="0">Others</option>');
-
-    $('#zoneHidden option').each(function() {
-      var dataIndex = $(this).data('index');
-
-      if (dataIndex == dataIndexToMatch) {
-        $('#branch').append($(this).clone());
-      }
-    });
-  });
-
-  $('#branch').on('change', function(){
-    if($(this).val() != '0'){
-      var selectedBranchValue = $(this).val();
-      var hiddenDropdownOption = $('#branchHidden').find('option[value="' + selectedBranchValue + '"]');
-
-      if (hiddenDropdownOption.length > 0) {
-        var selectedBranchText = hiddenDropdownOption.text(); // Get the corresponding branch's text (address)
-        $('#address').val(selectedBranchText); // Set the selected branch's text (address) into the textarea
-      } 
-      else {
-        $('#address').val(''); // Clear the textarea or provide a default value
-      }
-    }
-    else{
-      $('#address').val('');
-    }
   });
 
   $('#filterSearch').on('click', function(){
@@ -462,7 +483,7 @@ $(function () {
       toDateValue = date2.getFullYear() + "-" + (date2.getMonth() + 1) + "-" + date2.getDate() + " " + date2.getHours() + ":" + date2.getMinutes() + ":" + date2.getSeconds();
     }
 
-    var pickupMethod = $('#pickupMethod').val() ? $('#pickupMethod').val() : '';
+    var suppliesNoFilter = $('#suppliesNoFilter').val() ? $('#suppliesNoFilter').val() : '';
     var customerNoFilter = $('#customerNoFilter').val() ? $('#customerNoFilter').val() : '';
 
     //Destroy the old Datatable
@@ -484,31 +505,61 @@ $(function () {
         'data': {
           fromDate: fromDateValue,
           toDate: toDateValue,
-          method: pickupMethod,
+          supplier: suppliesNoFilter,
           customer: customerNoFilter,
         } 
       },
       'columns': [
+        { data: 'customer_name' },
         {
-          // Add a checkbox with a unique ID for each row
-          data: 'id', // Assuming 'serialNo' is a unique identifier for each row
-          className: 'select-checkbox',
-          orderable: false,
-          render: function (data, type, row) {
-            return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
+          data: null,
+          render: function(data, type, row) {
+            if (type === 'display') {
+              return 'From: ' + row.from_place + '<br>To: ' + row.to_place;
+            }
+            
+            return row.from_place + ' ' + row.to_place;
           }
         },
-        { data: 'customer_name' },
-        { data: 'description' },
-        { data: 'estimated_ctn' },
-        { data: 'actual_ctn' },
-        { data: 'pickup_method' },
-        { 
-          className: 'dt-control',
-          orderable: false,
+        {
           data: null,
+          render: function(data, type, row) {
+            if (type === 'display') {
+              return row.booking_date + '<br>' + row.booking_time;
+            }
+            
+            return row.booking_date + ' ' + row.booking_time;
+          }
+        },
+        {
+          data: null,
+          render: function(data, type, row) {
+            if (type === 'display') {
+              return row.contact_person + '<br>' + row.contact_number;
+            }
+
+            return row.contact_person + ' ' + row.contact_number;
+          }
+        },
+        { data: 'suplier_name' },
+        {
+          data: null,
+          render: function(data, type, row) {
+            if (type === 'display') {
+              return row.drivers_name + '<br>' + row.vehicles_no;
+            }
+
+            return row.drivers_name + ' ' + row.vehicles_no;
+          }
+        },
+        { 
+          data: 'id',
           render: function ( data, type, row ) {
-            return '<td class="table-elipse" data-toggle="collapse" data-target="#demo'+row.serialNo+'"><i class="fas fa-angle-down"></i></td>';
+            return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data
+            +')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="pickup'+data
+            +'" onclick="picked('+data+')" class="btn btn-info btn-sm"><i class="fas fa-car"></i></button></div><div class="col-3"><button type="button" id="complete'+data
+            +'" onclick="invoice('+data+')" class="btn btn-success btn-sm"><i class="fas fa-check"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data
+            +'" onclick="deactivate('+data+')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></div></div>';
           }
         }
       ],
@@ -516,41 +567,6 @@ $(function () {
         //$('td', row).css('background-color', '#E6E6FA');
         //$('#spinnerLoading').hide();
       },
-      // "footerCallback": function ( row, data, start, end, display ) {
-      //   var api = this.api();
-
-      //   // Remove the formatting to get integer data for summation
-      //   var intVal = function (i) {
-      //     return typeof i === 'string' ? i.replace(/[\$,]/g, '')*1 : typeof i === 'number' ? i : 0;
-      //   };
-
-      //   // Total over all pages
-      //   total = api.column(3).data().reduce( function (a, b) { return intVal(a) + intVal(b); }, 0 );
-      //   total2 = api.column(4).data().reduce( function (a, b) { return intVal(a) + intVal(b); }, 0 );
-      //   total3 = api.column(5).data().reduce( function (a, b) { return intVal(a) + intVal(b); }, 0 );
-      //   total4 = api.column(6).data().reduce( function (a, b) { return intVal(a) + intVal(b); }, 0 );
-      //   total5 = api.column(7).data().reduce( function (a, b) { return intVal(a) + intVal(b); }, 0 );
-      //   total6 = api.column(8).data().reduce( function (a, b) { return intVal(a) + intVal(b); }, 0 );
-      //   total7 = api.column(9).data().reduce( function (a, b) { return intVal(a) + intVal(b); }, 0 );
-
-      //   // Total over this page
-      //   pageTotal = api.column(3, {page: 'current'}).data().reduce( function (a, b) {return intVal(a) + intVal(b);}, 0 );
-      //   pageTotal2 = api.column(4, {page: 'current'}).data().reduce( function (a, b) {return intVal(a) + intVal(b);}, 0 );
-      //   pageTotal3 = api.column(5, {page: 'current'}).data().reduce( function (a, b) {return intVal(a) + intVal(b);}, 0 );
-      //   pageTotal4 = api.column(6, {page: 'current'}).data().reduce( function (a, b) {return intVal(a) + intVal(b);}, 0 );
-      //   pageTotal5 = api.column(7, {page: 'current'}).data().reduce( function (a, b) {return intVal(a) + intVal(b);}, 0 );
-      //   pageTotal6 = api.column(8, {page: 'current'}).data().reduce( function (a, b) {return intVal(a) + intVal(b);}, 0 );
-      //   pageTotal7 = api.column(9, {page: 'current'}).data().reduce( function (a, b) {return intVal(a) + intVal(b);}, 0 );
-
-      //   // Update footer
-      //   $(api.column(3).footer()).html(pageTotal +' kg ( '+ total +' kg)');
-      //   $(api.column(4).footer()).html(pageTotal2 +' kg ( '+ total2 +' kg)');
-      //   $(api.column(5).footer()).html(pageTotal3 +' kg ( '+ total3 +' kg)');
-      //   $(api.column(6).footer()).html(pageTotal4 +' kg ( '+ total4 +' kg)');
-      //   $(api.column(7).footer()).html(pageTotal5 +' ('+ total5 +')');
-      //   $(api.column(8).footer()).html('RM'+pageTotal6 +' ( RM'+ total6 +' total)');
-      //   $(api.column(9).footer()).html('RM'+pageTotal7 +' ( RM'+ total7 +' total)');
-      // }
     });
   });
 });
@@ -625,20 +641,17 @@ function edit(id) {
     
     if(obj.status === 'success'){
       $('#extendModal').find('#id').val(obj.message.id);
-      $('#extendModal').find('#pickup_method').val(obj.message.pickup_method);
+      $('#extendModal').find('#bookingDate').val(obj.message.booking_date);
       $('#extendModal').find('#customerNo').val(obj.message.customer);
-      $('#extendModal').find('#branch').val(obj.message.branch);
-      $('#extendModal').find('#address').val(obj.message.pickup_location);
-      $('#extendModal').find('#description').val(obj.message.description);
-      $('#extendModal').find('#extimated_ctn').val(obj.message.estimated_ctn);
-      $('#extendModal').find('#actual_ctn').val(obj.message.actual_ctn);
-      $('#extendModal').find('#gate').val(obj.message.gate);
-      $('#extendModal').find('#checker').val(obj.message.checker);
-      $('#extendModal').find('#vehicleNoTxt').val(obj.message.vehicle_no);
-      $('#extendModal').find('#form_no').val(obj.message.form_no);
-      $('#extendModal').find('#col_goods').val(obj.message.col_goods);
-      $('#extendModal').find('#col_chk').val(obj.message.col_chq);
-      $('#extendModal').find('#internal_notes').val(obj.message.internal_notes);
+      $('#extendModal').find('#bookingTime').val(obj.message.booking_time);
+      $('#extendModal').find('#fromAddress').val(obj.message.from_place);
+      $('#extendModal').find('#toAddress').val(obj.message.to_place);
+      $('#extendModal').find('#numberOfPeople').val(obj.message.number_of_person);
+      $('#extendModal').find('#contactPerson').val(obj.message.contact_person);
+      $('#extendModal').find('#contactNumber').val(obj.message.contact_number);
+      $('#extendModal').find('#supplierNo').val(obj.message.supplier);
+      $('#extendModal').find('#driverNo').val(obj.message.driver);
+      $('#extendModal').find('#vehicleNo').val(obj.message.vehicles);
 
       $('#extendModal').modal('show');
       $('#extendForm').validate({
@@ -721,5 +734,23 @@ function invoice(id) {
     }
     $('#spinnerLoading').hide();
   });
+}
+
+function formatDate(originalDate){
+  const day = originalDate.getDate().toString().padStart(2, '0');
+  const month = (originalDate.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based
+  const year = originalDate.getFullYear();
+
+  const formattedDate = `${day}/${month}/${year}`;
+
+  return formattedDate;
+}
+
+function formatTime(originalDate){
+  const hours = originalDate.getHours().toString().padStart(2, '0');
+  const minutes = originalDate.getMinutes().toString().padStart(2, '0');
+
+  const formattedTime = `${hours}:${minutes} ${originalDate.getHours() < 12 ? 'AM' : 'PM'}`;
+  return formattedTime;
 }
 </script>
