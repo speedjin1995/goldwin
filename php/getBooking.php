@@ -34,9 +34,11 @@ if(isset($_POST['userID'])){
                 $message["supplier"]=$row['supplier'];
                 $message["driver"]=$row['driver'];
                 $message["vehicles"]=$row['vehicles'];
+                $message["amount"]=$row['amount'];
                 $message["created_datetime"]=$row['created_datetime'];
                 $message["pickup_datetime"]=$row['pickup_datetime'];
                 $message["completed_datetime"]=$row['completed_datetime'];
+                $message["remark"]=$row['remark'];
             }
             
             echo json_encode(

@@ -4,7 +4,7 @@ mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 session_start();
 
-if(isset($_POST['bookingDate'], $_POST['customerNo'], $_POST['bookingTime'], $_POST['fromAddress'], $_POST['toAddress'], $_POST['numberOfPeople'])){
+if(isset($_POST['bookingDate'], $_POST['customerNo'], $_POST['bookingTime'], $_POST['fromAddress'], $_POST['toAddress'], $_POST['numberOfPeople'], $_POST['amount'])){
 	$userId = $_SESSION['userID'];
 	$bookingDate = filter_input(INPUT_POST, 'bookingDate', FILTER_SANITIZE_STRING);
 	$customerNo = filter_input(INPUT_POST, 'customerNo', FILTER_SANITIZE_STRING);
@@ -12,12 +12,14 @@ if(isset($_POST['bookingDate'], $_POST['customerNo'], $_POST['bookingTime'], $_P
 	$fromAddress = filter_input(INPUT_POST, 'fromAddress', FILTER_SANITIZE_STRING);
 	$toAddress = filter_input(INPUT_POST, 'toAddress', FILTER_SANITIZE_STRING);
 	$numberOfPeople = filter_input(INPUT_POST, 'numberOfPeople', FILTER_SANITIZE_STRING);
+	$amount = filter_input(INPUT_POST, 'amount', FILTER_SANITIZE_STRING);
 
 	$contactPerson = null;
 	$contactNumber = null;
 	$supplierNo = null;
 	$driverNo = null;
 	$vehicleNo = null;
+	$remark = null;
 	$dateTime2 = DateTime::createFromFormat('H:i A', $bookingTime);
 	$formattedTime = $dateTime2->format('H:i:s');
 	$dateTime = DateTime::createFromFormat('d/m/Y', $bookingDate);
@@ -43,11 +45,15 @@ if(isset($_POST['bookingDate'], $_POST['customerNo'], $_POST['bookingTime'], $_P
 		$vehicleNo = filter_input(INPUT_POST, 'vehicleNo', FILTER_SANITIZE_STRING);
 	}
 
+	if(isset($_POST['remark']) && $_POST['remark'] != null && $_POST['remark'] != ''){
+		$remark = filter_input(INPUT_POST, 'remark', FILTER_SANITIZE_STRING);
+	}
+
 	if(isset($_POST['id']) && $_POST['id'] != null && $_POST['id'] != ''){
 		if ($update_stmt = $db->prepare("UPDATE booking SET from_place=?, to_place=?, customer=?, booking_date=?, booking_time=?
-		, contact_person=?, contact_number=?, number_of_person=?, supplier=?, driver=?, vehicles=? WHERE id=?")){
-			$update_stmt->bind_param('ssssssssssss', $fromAddress, $toAddress, $customerNo, $formattedDate, $formattedTime, 
-			$contactPerson, $contactNumber, $numberOfPeople, $supplierNo, $driverNo, $vehicleNo, $_POST['id']);
+		, contact_person=?, contact_number=?, number_of_person=?, supplier=?, driver=?, vehicles=?, amount=?, remark=? WHERE id=?")){
+			$update_stmt->bind_param('ssssssssssssss', $fromAddress, $toAddress, $customerNo, $formattedDate, $formattedTime, 
+			$contactPerson, $contactNumber, $numberOfPeople, $supplierNo, $driverNo, $vehicleNo, $amount, $remark, $_POST['id']);
 		
 			// Execute the prepared query.
 			if (! $update_stmt->execute()){
@@ -81,9 +87,9 @@ if(isset($_POST['bookingDate'], $_POST['customerNo'], $_POST['bookingTime'], $_P
 	}
 	else{
 		if ($insert_stmt = $db->prepare("INSERT INTO booking (from_place, to_place, customer, booking_date, booking_time
-		, contact_person, contact_number, number_of_person, supplier, driver, vehicles) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")){
-			$insert_stmt->bind_param('sssssssssss', $fromAddress, $toAddress, $customerNo, $formattedDate, $formattedTime, 
-			$contactPerson, $contactNumber, $numberOfPeople, $supplierNo, $driverNo, $vehicleNo);
+		, contact_person, contact_number, number_of_person, supplier, driver, vehicles, amount, remark) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")){
+			$insert_stmt->bind_param('sssssssssssss', $fromAddress, $toAddress, $customerNo, $formattedDate, $formattedTime, 
+			$contactPerson, $contactNumber, $numberOfPeople, $supplierNo, $driverNo, $vehicleNo, $remark, $amount);
 			
 			// Execute the prepared query.
 			if (! $insert_stmt->execute()){

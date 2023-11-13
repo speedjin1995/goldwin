@@ -34,7 +34,6 @@ if($_POST['supplier'] != null && $_POST['supplier'] != '' && $_POST['supplier'] 
 	$searchQuery .= " and booking.supplier = '".$_POST['supplier']."'";
 }
 
-$searchQuery = " ";
 if($searchValue != ''){
   $searchQuery = " AND (customers.customer_name like '%".$searchValue."%' 
   OR supplies.supplier_name like '%".$searchValue."%'
@@ -130,6 +129,7 @@ while($row = mysqli_fetch_assoc($empRecords)) {
     "drivers_name"=>$drivers_name,
     "vehicles"=>$row['vehicles'],
     "vehicles_no"=>$vehicles_no,
+    "amount"=>$row['amount'],
     "created_datetime"=>$row['created_datetime'],
     "pickup_datetime"=>$row['pickup_datetime'],
     "completed_datetime"=>$row['completed_datetime']

@@ -138,6 +138,7 @@ else{
                   <th>Booking <br>Datetime</th>
                   <th>Contact</th>
                   <th>Partner</th>
+                  <th>Amount <br>(RM)</th>
                   <th>Driver &<br>Vehicles No.</th>
                   <th></th>
                 </tr>
@@ -165,7 +166,7 @@ else{
         <div class="modal-body">
           <input type="hidden" class="form-control" id="id" name="id">
           <div class="row">
-            <div class="col-4">
+            <div class="col-lg-4 col-md-6 col-sm-12">
               <div class="form-group">
                 <label class="labelStatus">Customer *</label>
                 <select class="form-control" id="customerNo" name="customerNo" required>
@@ -176,7 +177,7 @@ else{
                 </select>
               </div>
             </div>
-            <div class="col-4">
+            <div class="col-lg-4 col-md-6 col-sm-12">
               <div class="form-group">
                 <label class="labelStatus">Booking Date *</label>
                 <div class="input-group date" id="bookingDatePicker" data-target-input="nearest">
@@ -186,7 +187,7 @@ else{
                 </div>
               </div>
             </div>
-            <div class="col-4">
+            <div class="col-lg-4 col-md-6 col-sm-12">
               <div class="form-group">
                 <label class="labelStatus">Booking Time *</label>
                 <div class="input-group date" id="bookingTimePicker" data-target-input="nearest">
@@ -198,37 +199,37 @@ else{
             </div>
           </div>
           <div class="row">
-            <div class="col-4">
+            <div class="col-lg-4 col-md-6 col-sm-12">
               <div class="form-group">
                 <label>From *</label>
                 <textarea class="form-control" id="fromAddress" name="fromAddress" placeholder="Enter your origin address" required></textarea>
               </div>
             </div>
-            <div class="col-4">
+            <div class="col-lg-4 col-md-6 col-sm-12">
               <div class="form-group">
                 <label>To *</label>
                 <textarea class="form-control" id="toAddress" name="toAddress" placeholder="Enter your destination address" required></textarea>
               </div>
             </div>
-            <div class="form-group col-4">
+            <div class="form-group col-lg-4 col-md-6 col-sm-12">
               <label>Number of People *</label>
               <input class="form-control" type="number" placeholder="Number of people" id="numberOfPeople" name="numberOfPeople" min="0" step="1" required/>                        
             </div>
           </div>
           <div class="row">
-            <div class="col-4">
+            <div class="col-lg-4 col-md-6 col-sm-12">
               <div class="form-group">
                 <label>Contact Person</label>
                 <input class="form-control" type="text" placeholder="Contact Person" id="contactPerson" name="contactPerson"/>
               </div>
             </div>
-            <div class="col-4">
+            <div class="col-lg-4 col-md-6 col-sm-12">
               <div class="form-group">
                 <label>Contact Number</label>
                 <input class="form-control" type="text" placeholder="Contact Number" id="contactNumber" name="contactNumber"/>
               </div>
             </div>
-            <div class="col-4">
+            <div class="col-lg-4 col-md-6 col-sm-12">
               <div class="form-group">
                 <label class="labelStatus">Partner</label>
                 <select class="form-control" id="supplierNo" name="supplierNo">
@@ -241,7 +242,7 @@ else{
             </div>
           </div>
           <div class="row">
-            <div class="col-4">
+            <div class="col-lg-4 col-md-6 col-sm-12">
               <div class="form-group">
                 <label>Driver</label>
                 <select class="form-control" id="driverNo" name="driverNo">
@@ -252,7 +253,7 @@ else{
                 </select>
               </div>
             </div>
-            <div class="col-4">
+            <div class="col-lg-4 col-md-6 col-sm-12">
               <div class="form-group">
                 <label>Vehicle</label>
                 <select class="form-control" id="vehicleNo" name="vehicleNo">
@@ -261,6 +262,20 @@ else{
                     <option value="<?=$rowVeh['id'] ?>"><?=$rowVeh['veh_number'] ?></option>
                   <?php } ?>
                 </select>
+              </div>
+            </div>
+            <div class="col-lg-4 col-md-6 col-sm-12">
+              <div class="form-group">
+                <label>Amount (RM) * </label>
+                <input class="form-control" type="number" placeholder="Amount" id="amount" name="amount" required/>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="col-12">
+              <div class="form-group">
+                <label>Remark</label>
+                <textarea class="form-control" id="remark" name="remark" placeholder="Remark"></textarea>
               </div>
             </div>
           </div>
@@ -321,6 +336,7 @@ $(function () {
         }
       },
       { data: 'suplier_name' },
+      { data: 'amount' },
       {
         data: null,
         render: function(data, type, row) {
@@ -431,6 +447,8 @@ $(function () {
     $('#extendModal').find('#supplierNo').val("");
     $('#extendModal').find('#driverNo').val("");
     $('#extendModal').find('#vehicleNo').val("");
+    $('#extendModal').find('#amount').val("");
+    $('#extendModal').find('#remark').val("");
 
     $('#extendModal').modal('show');
     
@@ -542,6 +560,7 @@ $(function () {
           }
         },
         { data: 'suplier_name' },
+        { data: 'amount' },
         {
           data: null,
           render: function(data, type, row) {
@@ -652,6 +671,8 @@ function edit(id) {
       $('#extendModal').find('#supplierNo').val(obj.message.supplier);
       $('#extendModal').find('#driverNo').val(obj.message.driver);
       $('#extendModal').find('#vehicleNo').val(obj.message.vehicles);
+      $('#extendModal').find('#amount').val(obj.message.amount);
+      $('#extendModal').find('#remark').val(obj.message.remark);
 
       $('#extendModal').modal('show');
       $('#extendForm').validate({
