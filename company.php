@@ -14,14 +14,20 @@ else{
 	$stmt->execute();
 	$result = $stmt->get_result();
     $name = '';
+    $name_ch = '';
 	$address = '';
 	$phone = '';
+	$phone2 = '';
+	$phone3 = '';
 	$email = '';
 	
 	if(($row = $result->fetch_assoc()) !== null){
         $name = $row['name'];
+        $name_ch = $row['name_ch'];
         $address = $row['address'];
         $phone = $row['phone'];
+        $phone2 = $row['phone2'];
+        $phone3 = $row['phone3'];
         $email = $row['email'];
     }
 }
@@ -45,6 +51,11 @@ else{
 					<label for="name">Company Name *</label>
 					<input type="text" class="form-control" id="name" name="name" value="<?=$name ?>" placeholder="Enter Company Name" required="">
 				</div>
+
+                <div class="form-group">
+					<label for="name">Company Name (CH)*</label>
+					<input type="text" class="form-control" id="name_ch" name="name_ch" value="<?=$name_ch ?>" placeholder="Enter Company Name" required="">
+				</div>
 				
 				<div class="form-group">
 					<label for="address">Company Address *</label>
@@ -54,6 +65,16 @@ else{
                 <div class="form-group">
 					<label for="phone">Company Phone </label>
 					<input type="text" class="form-control" id="phone" name="phone" value="<?=$phone ?>" placeholder="Enter Phone">
+				</div>
+
+                <div class="form-group">
+					<label for="phone">Company Phone 2</label>
+					<input type="text" class="form-control" id="phone2" name="phone2" value="<?=$phone2 ?>" placeholder="Enter Phone">
+				</div>
+
+                <div class="form-group">
+					<label for="phone">Company Phone 3</label>
+					<input type="text" class="form-control" id="phone3" name="phone3" value="<?=$phone3 ?>" placeholder="Enter Phone">
 				</div>
 
                 <div class="form-group">

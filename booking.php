@@ -219,13 +219,13 @@ else{
           <div class="row">
             <div class="col-lg-4 col-md-6 col-sm-12">
               <div class="form-group">
-                <label>Contact Person</label>
+                <label>Passenger Name</label>
                 <input class="form-control" type="text" placeholder="Contact Person" id="contactPerson" name="contactPerson"/>
               </div>
             </div>
             <div class="col-lg-4 col-md-6 col-sm-12">
               <div class="form-group">
-                <label>Contact Number</label>
+                <label>Passenger Contact</label>
                 <input class="form-control" type="text" placeholder="Contact Number" id="contactNumber" name="contactNumber"/>
               </div>
             </div>

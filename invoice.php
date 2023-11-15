@@ -55,6 +55,18 @@ else{
 
               <div class="col-3">
                 <div class="form-group">
+                  <label>Customer</label>
+                  <select class="form-control" id="customerNoFilter" name="customerNoFilter">
+                    <option value="" selected disabled hidden>Please Select</option>
+                    <?php while($rowSupplies3=mysqli_fetch_assoc($customers)){ ?>
+                      <option value="<?=$rowSupplies3['id'] ?>"><?=$rowSupplies3['customer_name'] ?></option>
+                    <?php } ?>
+                  </select>
+                </div>
+              </div>
+
+              <div class="col-3">
+                <div class="form-group">
                   <label>Partner</label>
                   <select class="form-control" id="suppliesNoFilter" name="suppliesNoFilter">
                     <option value="" selected disabled hidden>Please Select</option>
@@ -109,89 +121,6 @@ else{
     </div>
   </div>
 </section><!-- /.content -->
-
-<div class="modal fade" id="purchaseModal">
-  <div class="modal-dialog modal-xl">
-    <div class="modal-content">
-      <form role="form" id="purchaseForm">
-        <div class="modal-header">
-          <h4 class="modal-title">Create Invoices</h4>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <div class="container-fluid">
-            <div class="card card-primary">
-              <div class="card-body">
-                <!--<input type="hidden" class="form-control" id="id" name="id">
-                <input type="hidden" class="form-control" id="purchaseId" name="purchaseId">--->
-                <div class="row">
-                  <h4>General Informations</h4>
-                </div>
-                <div class="row">
-                  <div class="col-4">
-                    <div class="form-group">
-                      <label for="inputJobNo">Invoice Number</label>
-                      <input type="text" class="form-control" id="inputInvNo" name="inputInvNo" placeholder="<new>" readonly>
-                    </div>
-                  </div>
-                  <div class="col-4">
-                    <div class="form-group">
-                      <label for="inputJobNo">Customer *</label>
-                      <select class="form-control" id="customerNo" name="customerNo" required>
-                        <option value="" selected disabled hidden>Please Select</option>
-                        <?php while($rowCustomer=mysqli_fetch_assoc($customers)){ ?>
-                            <option value="<?=$rowCustomer['id'] ?>"><?=$rowCustomer['customer_name'] ?></option>
-                        <?php } ?>
-                      </select>
-                    </div>
-                  </div>
-                  <div class="col-4">
-                    <div class="form-group">
-                      <label>Date</label>
-                      <div class="input-group date" id="inputDate" data-target-input="nearest">
-                        <input type="text" class="form-control datetimepicker-input" id="inputDate" name="inputDate" data-target="#inputDate" />
-                        <div class="input-group-append" data-target="#inputDate" data-toggle="datetimepicker">
-                          <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-              </div>
-            </div>
-            <div class="card card-primary">
-              <div class="card-body">
-                <div class="row">
-                  <h4>Details</h4>
-                  <button style="margin-left:auto;margin-right: 25px;" type="button" class="btn btn-primary add-row">Add Item</button>
-                </div>
-                <table style="width: 100%;">
-                  <thead>
-                    <tr>
-                      <th>No.</th>
-                      <th>Item</th>
-                      <th>Price</th>
-                      <th></th>
-                    </tr>
-                  </thead>
-                  <tbody class="TableId" name="TableId" id="TableId"></tbody>
-                  <tfoot><th colspan="2">Total</th><th><input type="text" class="form-control" id="totalAmount" name="totalAmount" placeholder="0.00" readonly></th></tfoot>
-                </table>
-              </div>
-            </div>
-          </div><!-- /.container-fluid -->
-        </div>
-        <div class="modal-footer justify-content-between">
-          <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-          <button type="submit" class="btn btn-primary" name="submit" id="submitPurchase">Save Change</button>
-        </div>
-      </form>
-    </div>
-    <!-- /.modal-content -->
-  </div>
-  <!-- /.modal-dialog -->
-</div>
 
 <script>
 $(function () {
@@ -307,6 +236,7 @@ $(function () {
     }
 
     var suppliesNoFilter = $('#suppliesNoFilter').val() ? $('#suppliesNoFilter').val() : '';
+    var customerNoFilter = $('#customerNoFilter').val() ? $('#customerNoFilter').val() : '';
 
     //Destroy the old Datatable
     $("#tableforPurchase").DataTable().clear().destroy();
@@ -328,6 +258,7 @@ $(function () {
           fromDate: fromDateValue,
           toDate: toDateValue,
           supplier: suppliesNoFilter,
+          customer: customerNoFilter
         } 
       },
       'columns': [
@@ -378,6 +309,48 @@ $(function () {
         //$('td', row).css('background-color', '#E6E6FA');
         //$('#spinnerLoading').hide();
       },
+    });
+  });
+
+  $('#exportInvoices').on('click', function(){
+    var fromDateValue = '';
+    var toDateValue = '';
+
+    if($('#fromDate').val()){
+      var convert1 = $('#fromDate').val();
+      var convert2 = convert1.split("/");
+      fromDateValue = convert2[2] + "-" + convert2[1] + "-" + convert2[0];
+    }
+    
+    if($('#toDate').val()){
+      var convert3 = $('#toDate').val();
+      var convert4 = convert3.split("/");
+      toDateValue = convert4[2] + "-" + convert4[1] + "-" + convert4[0];
+    }
+
+    var suppliesNoFilter = $('#suppliesNoFilter').val() ? $('#suppliesNoFilter').val() : '';
+    var customerNoFilter = $('#customerNoFilter').val() ? $('#customerNoFilter').val() : '';
+
+    $.post('php/print.php', {fromDate: fromDateValue, toDate: toDateValue, supplier: suppliesNoFilter, customer: customerNoFilter}, function(data){
+      var obj = JSON.parse(data); 
+      
+      if(obj.status === 'success'){
+        var printWindow = window.open('', '', 'height=800,width=1000');
+        printWindow.document.write(obj.message);
+        printWindow.document.close();
+        setTimeout(function(){
+            printWindow.print();
+            printWindow.close();
+        }, 1000);
+      }
+      else if(obj.status === 'failed'){
+        toastr["error"](obj.message, "Failed:");
+      }
+      else{
+        toastr["error"]("Something wrong when edit", "Failed:");
+      }
+
+      $('#spinnerLoading').hide();
     });
   });
 });
@@ -439,8 +412,13 @@ function cancel(id) {
     var obj = JSON.parse(data); 
     
     if(obj.status === 'success'){
-      toastr["success"](obj.message, "Success:");
-      $('#tableforPurchase').DataTable().ajax.reload();
+      var printWindow = window.open('', '', 'height=800,width=1000');
+      printWindow.document.write(obj.message);
+      printWindow.document.close();
+      setTimeout(function(){
+          printWindow.print();
+          printWindow.close();
+      }, 1000);
     }
     else if(obj.status === 'failed'){
       toastr["error"](obj.message, "Failed:");

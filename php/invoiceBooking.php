@@ -17,6 +17,7 @@ if(isset($_POST['userID'])){
 	$to = '';
 	$amount = '0.00';
 	$passenger = '';
+	$customer = null;
 	$supplier = null;
 	$remark = null;
 	$uid = $_SESSION['userID'];
@@ -32,6 +33,7 @@ if(isset($_POST['userID'])){
                 $from = $row2['from_place'];
 				$to = $row2['to_place'];
 				$amount = $row2['amount'];
+				$customer = $row2['customer'];
 				$passenger = $row2['contact_person'];
 
 				if($row2['supplier'] != null && $row2['supplier'] != ''){
@@ -52,8 +54,8 @@ if(isset($_POST['userID'])){
 		
 		if($stmt2->execute()){
 			$stmt2->close();
-			if ($insert_stmt = $db->prepare("INSERT INTO invoice (supplier, amount, created_time, created_date, passenger, from_place, to_place, remark) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")) {
-				$insert_stmt->bind_param('ssssssss', $supplier, $amount, $createdTime, $createdDate, $passenger, $from, $to, $remark);
+			if ($insert_stmt = $db->prepare("INSERT INTO invoice (supplier, customer, amount, created_time, created_date, passenger, from_place, to_place, remark) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+				$insert_stmt->bind_param('sssssssss', $supplier, $customer, $amount, $createdTime, $createdDate, $passenger, $from, $to, $remark);
 				
 				if(!$insert_stmt->execute()){
 					echo json_encode(

@@ -26,6 +26,10 @@ if(isset($_POST['supplier']) && $_POST['supplier'] != null && $_POST['supplier']
 	$searchQuery .= " and supplier = '".$_POST['supplier']."'";
 }
 
+if(isset($_POST['customer']) && $_POST['customer'] != null && $_POST['customer'] != '' && $_POST['customer'] != '-'){
+	$searchQuery .= " and customer = '".$_POST['customer']."'";
+}
+
 if($searchValue != ''){
   $searchQuery = " AND (passenger like '%".$searchValue."%' 
   OR to_place like '%".$searchValue."%')

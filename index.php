@@ -32,7 +32,7 @@ else{
 
   <title>Gold Win</title>
 
-  <link rel="icon" href="assets/logo.png" type="image">
+  <link rel="icon" href="assets/logoSmall.png" type="image">
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="plugins/fontawesome-free/css/all.min.css">
   <!-- IonIcons -->
@@ -303,8 +303,8 @@ to get the desired effect
   <aside class="main-sidebar sidebar-dark-primary elevation-4" style="background-color: #3d44c1;">
     <!-- Brand Logo -->
     <a href="#" class="brand-link logo-switch">
-      <img src="assets/logo.png" alt="Sneakercube Logo" class="brand-image-xl logo-xs">
-      <img src="assets/logo.png" alt="Sneakercube Logo" class="brand-image-xl logo-xl">
+      <img src="assets/logoSmall.png" alt="Sneakercube Logo" class="brand-image-xl logo-xs">
+      <img src="assets/logoSmall.png" alt="Sneakercube Logo" class="brand-image-xl logo-xl">
     </a>
 
     <!-- Sidebar -->
