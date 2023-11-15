@@ -49,7 +49,7 @@ if ($row = $result1->fetch_assoc()) {
     $compiemail = $row['email'];
 }
 
-if ($select_stmt = $db->prepare("SELECT invoice.*, customers.customer_name FROM invoice, customers WHERE invoice.deleted = '0'".$searchQuery)) {
+if ($select_stmt = $db->prepare("SELECT invoice.*, customers.customer_name FROM invoice, customers WHERE invoice.deleted = '0' AND invoice.customer = customers.id".$searchQuery)) {
     if (! $select_stmt->execute()) {
         echo json_encode(
             array(
@@ -217,7 +217,7 @@ if ($select_stmt = $db->prepare("SELECT invoice.*, customers.customer_name FROM 
                     <td style="text-align: center;">'.$invoice['passenger'].'</td>
                     <td style="text-align: center;">'.$invoice['from_place'].'</td>
                     <td style="text-align: center;">'.$invoice['to_place'].'</td>
-                    <td style="text-align: center;">RM '.$invoice['amount'].'</td>
+                    <td style="text-align: center;">RM '.(string)number_format($invoice['amount'], 2, '.', '').'</td>
                 </tr>';
             }
 
