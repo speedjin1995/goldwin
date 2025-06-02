@@ -375,6 +375,12 @@ to get the desired effect
                       <p>Vehicles</p>
                     </a>
                   </li>
+                  <li class="nav-item">
+                    <a href="#currency" data-file="currency.php" class="nav-link link">
+                      <i class="nav-icon fas fa-usd"></i>
+                      <p>Currency</p>
+                    </a>
+                  </li>
                 </ul>
               </li>';
               }

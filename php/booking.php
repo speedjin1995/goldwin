@@ -89,7 +89,7 @@ if(isset($_POST['bookingDate'], $_POST['customerNo'], $_POST['bookingTime'], $_P
 		if ($insert_stmt = $db->prepare("INSERT INTO booking (from_place, to_place, customer, booking_date, booking_time
 		, contact_person, contact_number, number_of_person, supplier, driver, vehicles, amount, remark) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")){
 			$insert_stmt->bind_param('sssssssssssss', $fromAddress, $toAddress, $customerNo, $formattedDate, $formattedTime, 
-			$contactPerson, $contactNumber, $numberOfPeople, $supplierNo, $driverNo, $vehicleNo, $remark, $amount);
+			$contactPerson, $contactNumber, $numberOfPeople, $supplierNo, $driverNo, $vehicleNo, $amount, $remark);
 			
 			// Execute the prepared query.
 			if (! $insert_stmt->execute()){
