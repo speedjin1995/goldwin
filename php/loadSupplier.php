@@ -40,6 +40,7 @@ while($row = mysqli_fetch_assoc($empRecords)) {
       'supplier_address'=>$row['supplier_address'].$row['supplier_address2'].$row['supplier_address3'].$row['supplier_address4'],
       'supplier_phone'=>$row['supplier_phone'],
       'pic'=>$row['pic'],
+      'commision'=>$row['commisions'],
     );
 }
 

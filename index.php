@@ -377,7 +377,7 @@ to get the desired effect
                   </li>
                   <li class="nav-item">
                     <a href="#currency" data-file="currency.php" class="nav-link link">
-                      <i class="nav-icon fas fa-usd"></i>
+                      <i class="nav-icon fas fa-dollar-sign"></i>
                       <p>Currency</p>
                     </a>
                   </li>

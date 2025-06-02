@@ -16,14 +16,14 @@ $searchQuery = " ";
 
 if($_POST['fromDate'] != null && $_POST['fromDate'] != ''){
   $fromDate = new DateTime($_POST['fromDate']);
-  $fromDateTime = date_format($fromDate,"Y-m-d H:i:s");
-  $searchQuery = " and booking.created_datetime >= '".$fromDateTime."'";
+  $fromDateTime = date_format($fromDate,"Y-m-d");
+  $searchQuery = " and booking.booking_date >= '".$fromDateTime."'";
 }
 
 if($_POST['toDate'] != null && $_POST['toDate'] != ''){
   $toDate = new DateTime($_POST['toDate']);
-  $toDateTime = date_format($toDate,"Y-m-d H:i:s");
-	$searchQuery .= " and booking.created_datetime <= '".$toDateTime."'";
+  $toDateTime = date_format($toDate,"Y-m-d");
+	$searchQuery .= " and booking.booking_date <= '".$toDateTime."'";
 }
 
 if($_POST['customer'] != null && $_POST['customer'] != '' && $_POST['customer'] != '-'){
@@ -52,7 +52,7 @@ $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-$empQuery = "select booking.*, customers.customer_name from booking, customers WHERE booking.deleted='0' AND booking.customer=customers.id".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+$empQuery = "select booking.*, customers.customer_name from booking, customers WHERE booking.deleted='0' AND booking.customer=customers.id".$searchQuery." order by booking.booking_date ".$columnSortOrder." limit ".$row.",".$rowperpage;
 $empRecords = mysqli_query($db, $empQuery);
 $data = array();
 
@@ -141,7 +141,8 @@ $response = array(
   "draw" => intval($draw),
   "iTotalRecords" => $totalRecords,
   "iTotalDisplayRecords" => $totalRecordwithFilter,
-  "aaData" => $data
+  "aaData" => $data,
+  "query" => $empQuery
 );
 
 echo json_encode($response);

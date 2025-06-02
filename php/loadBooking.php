@@ -31,7 +31,7 @@ $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-$empQuery = "select booking.*, customers.customer_name from booking, customers WHERE booking.deleted='0' AND booking.customer=customers.id".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+$empQuery = "select booking.*, customers.customer_name from booking, customers WHERE booking.deleted='0' AND booking.customer=customers.id".$searchQuery." order by booking.booking_date ".$columnSortOrder." limit ".$row.",".$rowperpage;
 $empRecords = mysqli_query($db, $empQuery);
 $data = array();
 
@@ -121,7 +121,8 @@ $response = array(
   "draw" => intval($draw),
   "iTotalRecords" => $totalRecords,
   "iTotalDisplayRecords" => $totalRecordwithFilter,
-  "aaData" => $data
+  "aaData" => $data,
+  "query" => $empQuery 
 );
 
 echo json_encode($response);

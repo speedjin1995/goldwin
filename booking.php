@@ -168,13 +168,17 @@ else{
           <div class="row">
             <div class="col-lg-4 col-md-6 col-sm-12">
               <div class="form-group">
-                <label class="labelStatus">Customer *</label>
+                <label class="labelStatus">
+                  Customer *
+                  <span style="padding-left: 80px;"><input type="checkbox" class="form-check-input" id="manualCustomer" name="manualCustomer" value="0"/>Others</span>
+                </label>
                 <select class="form-control" id="customerNo" name="customerNo" required>
                   <option value="" selected disabled hidden>Please Select</option>
                   <?php while($rowCustomer=mysqli_fetch_assoc($customers)){ ?>
                     <option value="<?=$rowCustomer['id'] ?>"><?=$rowCustomer['customer_name'] ?></option>
                   <?php } ?>
                 </select>
+                <input class="form-control" type="text" placeholder="Customer Name *" id="customerNoTxt" name="customerNoTxt" hidden>
               </div>
             </div>
             <div class="col-lg-4 col-md-6 col-sm-12">
@@ -244,24 +248,32 @@ else{
           <div class="row">
             <div class="col-lg-4 col-md-6 col-sm-12">
               <div class="form-group">
-                <label>Driver</label>
+                <label>
+                  Driver
+                  <span style="padding-left: 80px;"><input type="checkbox" class="form-check-input" id="manualDriver" name="manualDriver" value="0"/>Others</span>
+                </label>
                 <select class="form-control" id="driverNo" name="driverNo">
                   <option value="" selected disabled hidden>Please Select</option>
                   <?php while($rowDriver=mysqli_fetch_assoc($transporters)){ ?>
                     <option value="<?=$rowDriver['id'] ?>"><?=$rowDriver['transporter_name'] ?></option>
                   <?php } ?>
                 </select>
+                <input class="form-control" type="text" placeholder="Driver Name" id="driverNoTxt" name="driverNoTxt" hidden>
               </div>
             </div>
             <div class="col-lg-4 col-md-6 col-sm-12">
               <div class="form-group">
-                <label>Vehicle</label>
+                <label>
+                  Vehicle
+                  <span style="padding-left: 80px;"><input type="checkbox" class="form-check-input" id="manualVehicle" name="manualVehicle" value="0"/>Others</span>
+                </label>
                 <select class="form-control" id="vehicleNo" name="vehicleNo">
                   <option value="" selected disabled hidden>Please Select</option>
                   <?php while($rowVeh=mysqli_fetch_assoc($vehicles)){ ?>
                     <option value="<?=$rowVeh['id'] ?>"><?=$rowVeh['veh_number'] ?></option>
                   <?php } ?>
                 </select>
+                <input class="form-control" type="text" placeholder="Vehicle No." id="vehicleNoTxt" name="vehicleNoTxt" hidden>
               </div>
             </div>
             <div class="col-lg-4 col-md-6 col-sm-12">
@@ -387,84 +399,27 @@ $(function () {
 
   //Date picker
   $('#fromDatePicker').datetimepicker({
-      icons: { time: 'far fa-calendar' },
-      format: 'DD/MM/YYYY HH:mm:ss A',
-      defaultDate: new Date
+    icons: { time: 'far fa-calendar' },
+    format: 'DD/MM/YYYY HH:mm:ss A',
+    defaultDate: new Date
   });
 
   $('#toDatePicker').datetimepicker({
-      icons: { time: 'far fa-calendar' },
-      format: 'DD/MM/YYYY HH:mm:ss A',
-      defaultDate: new Date
+    icons: { time: 'far fa-calendar' },
+    format: 'DD/MM/YYYY HH:mm:ss A',
+    defaultDate: new Date
   });
 
   $('#bookingDatePicker').datetimepicker({
-      icons: { time: 'far fa-calendar' },
-      format: 'DD/MM/YYYY',
-      defaultDate: new Date
+    icons: { time: 'far fa-calendar' },
+    format: 'DD/MM/YYYY',
+    defaultDate: new Date
   });
 
   $('#bookingTimePicker').datetimepicker({
       icons: { time: 'far fa-clock' },
       format: 'HH:mm A',
       defaultDate: new Date
-  });
-
-  $.validator.setDefaults({
-    submitHandler: function () {
-      if($('#extendModal').hasClass('show')){
-        $('#spinnerLoading').show();
-        $.post('php/booking.php', $('#extendForm').serialize(), function(data){
-          var obj = JSON.parse(data); 
-          if(obj.status === 'success'){
-            $('#extendModal').modal('hide');
-            toastr["success"](obj.message, "Success:");
-            $('#weightTable').DataTable().ajax.reload();
-          }
-          else if(obj.status === 'failed'){
-            toastr["error"](obj.message, "Failed:");
-          }
-          else{
-            toastr["error"]("Something wrong when edit", "Failed:");
-          }
-
-          $('#spinnerLoading').hide();
-        });
-      }
-    }
-  });
-
-  $('#newBooking').on('click', function(){
-    $('#extendModal').find('#id').val("");
-    $('#extendModal').find('#bookingDate').val(formatDate(new Date));
-    $('#extendModal').find('#customerNo').val("");
-    $('#extendModal').find('#bookingTime').val(formatTime(new Date));
-    $('#extendModal').find('#fromAddress').val("");
-    $('#extendModal').find('#toAddress').val("");
-    $('#extendModal').find('#numberOfPeople').val("1");
-    $('#extendModal').find('#contactPerson').val("");
-    $('#extendModal').find('#contactNumber').val("");
-    $('#extendModal').find('#supplierNo').val("");
-    $('#extendModal').find('#driverNo').val("");
-    $('#extendModal').find('#vehicleNo').val("");
-    $('#extendModal').find('#amount').val("");
-    $('#extendModal').find('#remark').val("");
-
-    $('#extendModal').modal('show');
-    
-    $('#extendForm').validate({
-      errorElement: 'span',
-      errorPlacement: function (error, element) {
-        error.addClass('invalid-feedback');
-        element.closest('.form-group').append(error);
-      },
-      highlight: function (element, errorClass, validClass) {
-        $(element).addClass('is-invalid');
-      },
-      unhighlight: function (element, errorClass, validClass) {
-        $(element).removeClass('is-invalid');
-      }
-    });
   });
 
   $('#filterSearch').on('click', function(){
@@ -515,7 +470,7 @@ $(function () {
       'serverSide': true,
       'serverMethod': 'post',
       'searching': false,
-      'order': [[ 1, 'asc' ]],
+      'order': [[ 0, 'asc' ]],
       'columnDefs': [ { orderable: false, targets: [0] }],
       'ajax': {
         'type': 'POST',
@@ -588,6 +543,126 @@ $(function () {
       },
     });
   });
+
+  $.validator.setDefaults({
+    submitHandler: function () {
+      if($('#extendModal').hasClass('show')){
+        $('#spinnerLoading').show();
+        $.post('php/booking.php', $('#extendForm').serialize(), function(data){
+          var obj = JSON.parse(data); 
+          if(obj.status === 'success'){
+            $('#extendModal').modal('hide');
+            toastr["success"](obj.message, "Success:");
+            $('#weightTable').DataTable().ajax.reload();
+          }
+          else if(obj.status === 'failed'){
+            toastr["error"](obj.message, "Failed:");
+          }
+          else{
+            toastr["error"]("Something wrong when edit", "Failed:");
+          }
+
+          $('#spinnerLoading').hide();
+        });
+      }
+    }
+  });
+
+  $('#newBooking').on('click', function(){
+    $('#extendModal').find('#id').val("");
+    $('#extendModal').find('#bookingDate').val(formatDate(new Date));
+    $('#extendModal').find('#customerNo').val("");
+    $('#extendModal').find('#bookingTime').val(formatTime(new Date));
+    $('#extendModal').find('#fromAddress').val("");
+    $('#extendModal').find('#toAddress').val("");
+    $('#extendModal').find('#numberOfPeople').val("1");
+    $('#extendModal').find('#contactPerson').val("");
+    $('#extendModal').find('#contactNumber').val("");
+    $('#extendModal').find('#supplierNo').val("");
+    $('#extendModal').find('#driverNo').val("");
+    $('#extendModal').find('#vehicleNo').val("");
+    $('#extendModal').find('#amount').val("");
+    $('#extendModal').find('#remark').val("");
+    $('#extendModal').find('#manualCustomer').prop('checked', false);
+    $('#extendModal').find('#customerNoTxt').val("");
+    $('#extendModal').find('#customerNo').removeAttr('hidden');
+    $('#extendModal').find('#customerNo').attr('required', 'true');
+    $('#extendModal').find('#customerNoTxt').attr('hidden', 'hidden');
+    $('#extendModal').find('#manualDriver').prop('checked', false);
+    $('#extendModal').find('#driverNoTxt').val("");
+    $('#extendModal').find('#driverNo').removeAttr('hidden');
+    $('#extendModal').find('#driverNoTxt').attr('hidden', 'hidden');
+    $('#extendModal').find('#manualVehicle').prop('checked', false);
+    $('#extendModal').find('#vehicleNoTxt').val("");
+    $('#extendModal').find('#vehicleNo').removeAttr('hidden');
+    $('#extendModal').find('#vehicleNoTxt').attr('hidden', 'hidden');
+    $('#extendModal').modal('show');
+    
+    $('#extendForm').validate({
+      errorElement: 'span',
+      errorPlacement: function (error, element) {
+        error.addClass('invalid-feedback');
+        element.closest('.form-group').append(error);
+      },
+      highlight: function (element, errorClass, validClass) {
+        $(element).addClass('is-invalid');
+      },
+      unhighlight: function (element, errorClass, validClass) {
+        $(element).removeClass('is-invalid');
+      }
+    });
+  });
+
+  $('#extendModal').find('#manualCustomer').on('click', function(){
+    if($(this).is(':checked')){
+      $(this).val(1);
+      $('#customerNoTxt').removeAttr('hidden');
+      $('#customerNoTxt').attr('required', 'true');
+      $('#customerNo').attr('hidden', 'hidden');
+      $('#customerNo').removeAttr('required');
+      $('#customerNo').val('');
+    }
+    else{
+      $(this).val(0);
+      $('#customerNo').removeAttr('hidden');
+      $('#customerNo').attr('required', 'true');
+      $('#customerNoTxt').attr('hidden', 'hidden');
+      $('#customerNoTxt').removeAttr('required');
+      $('#customerNoTxt').val('');
+    }
+  });
+
+  $('#extendModal').find('#manualDriver').on('click', function(){
+    if($(this).is(':checked')){
+      $(this).val(1);
+      $('#driverNoTxt').removeAttr('hidden');
+      $('#driverNo').attr('hidden', 'hidden');
+      $('#driverNo').val('');
+    }
+    else{
+      $(this).val(0);
+      $('#driverNo').removeAttr('hidden');
+      $('#driverNoTxt').attr('hidden', 'hidden');
+      $('#driverNoTxt').val('');
+    }
+  });
+
+  $('#extendModal').find('#manualVehicle').on('click', function(){
+    if($(this).is(':checked')){
+      $(this).val(1);
+      $('#vehicleNoTxt').removeAttr('hidden');
+      $('#vehicleNo').attr('hidden', 'hidden');
+      $('#vehicleNo').val('');
+    }
+    else{
+      $(this).val(0);
+      $('#vehicleNo').removeAttr('hidden');
+      $('#vehicleNoTxt').attr('hidden', 'hidden');
+      $('#vehicleNoTxt').val('');
+    }
+  });
+
+  
 });
 
 function format (row) {

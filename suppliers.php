@@ -9,6 +9,7 @@ if(!isset($_SESSION['userID'])){
 }
 else{
   $user = $_SESSION['userID'];
+  $currency = $db->query("SELECT * FROM currency WHERE deleted = '0'");
 }
 ?>
 
@@ -16,7 +17,7 @@ else{
     <div class="container-fluid">
         <div class="row mb-2">
 			<div class="col-sm-6">
-				<h1 class="m-0 text-dark">Suppliers</h1>
+				<h1 class="m-0 text-dark">Partners</h1>
 			</div><!-- /.col -->
         </div><!-- /.row -->
     </div><!-- /.container-fluid -->
@@ -35,7 +36,7 @@ else{
                             <div class="col-3">
                                 <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="addSuppliers">
                                     <i class="fas fa-plus"></i>  
-                                    Add Suppliers
+                                    Add Partners
                                 </button>
                             </div>
                         </div>
@@ -49,6 +50,7 @@ else{
 									<th>Address</th>
 									<th>Phone</th>
 									<th>PIC</th>
+                                    <th>Commisions</th>
 									<th>Actions</th>
 								</tr>
 							</thead>
@@ -65,7 +67,7 @@ else{
       <div class="modal-content">
         <form role="form" id="supplierForm">
             <div class="modal-header">
-              <h4 class="modal-title">Add Suppliers</h4>
+              <h4 class="modal-title">Add Partners</h4>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
@@ -76,11 +78,11 @@ else{
                   <input type="hidden" class="form-control" id="id" name="id">
                 </div>
                 <div class="form-group">
-                  <label for="name">Supplier Code *</label>
+                  <label for="name">Partners Code *</label>
                   <input type="text" class="form-control" name="code" id="code" placeholder="Enter Supplier Code" required>
                 </div>
                 <div class="form-group">
-                  <label for="name">Supplier Name *</label>
+                  <label for="name">Partners Name *</label>
                   <input type="text" class="form-control" name="name" id="name" placeholder="Enter Supplier Name" required>
                 </div>
                 <div class="form-group"> 
@@ -106,6 +108,19 @@ else{
                 <div class="form-group"> 
                   <label for="email">PIC *</label>
                   <input type="text" class="form-control" id="email" name="email" placeholder="Enter your pic" required>
+                </div>
+                <div class="form-group">
+                  <label>Currency *</label>
+                  <select class="form-control" id="currency" name="currency" required>
+                    <option value="" selected disabled hidden>Please Select</option>
+                    <?php while($rowCustomer2=mysqli_fetch_assoc($currency)){ ?>
+                      <option value="<?=$rowCustomer2['id'] ?>"><?=$rowCustomer2['currency'] ?></option>
+                    <?php } ?>
+                  </select>
+                </div>
+                <div class="form-group"> 
+                  <label for="commision">Commision *</label>
+                  <input type="number" class="form-control" id="commision" name="commision" placeholder="Enter Commision" required>
                 </div>
               </div>
             </div>
@@ -137,6 +152,7 @@ $(function () {
             { data: 'supplier_address' },
             { data: 'supplier_phone' },
             { data: 'pic' },
+            { data: 'commision' },
             { 
                 data: 'id',
                 render: function ( data, type, row ) {
@@ -184,6 +200,8 @@ $(function () {
         $('#addModal').find('#address4').val("");
         $('#addModal').find('#phone').val("");
         $('#addModal').find('#email').val("");
+        $('#addModal').find('#currency').val("");
+        $('#addModal').find('#commision').val("0");
         $('#addModal').modal('show');
         
         $('#supplierForm').validate({
@@ -217,6 +235,8 @@ function edit(id){
             $('#addModal').find('#address4').val(obj.message.supplier_address4);
             $('#addModal').find('#phone').val(obj.message.supplier_phone);
             $('#addModal').find('#email').val(obj.message.pic);
+            $('#addModal').find('#currency').val(obj.message.currency);
+            $('#addModal').find('#commision').val(obj.message.commision);
             $('#addModal').modal('show');
             
             $('#supplierForm').validate({

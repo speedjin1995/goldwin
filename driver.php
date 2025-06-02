@@ -35,7 +35,7 @@ else{
                             <div class="col-3">
                                 <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="addTransporter">
                                     <i class="fas fa-plus"></i>      
-                                    Add Transporter
+                                    Add Driver
                                 </button>
                             </div>
                         </div>
@@ -62,7 +62,7 @@ else{
       <div class="modal-content">
         <form role="form" id="transporterForm">
             <div class="modal-header">
-              <h4 class="modal-title">Add Transporter</h4>
+              <h4 class="modal-title">Add Driver</h4>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>

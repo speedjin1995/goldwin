@@ -4,15 +4,17 @@ mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 session_start();
 
-if(isset($_POST['bookingDate'], $_POST['customerNo'], $_POST['bookingTime'], $_POST['fromAddress'], $_POST['toAddress'], $_POST['numberOfPeople'], $_POST['amount'])){
+if(isset($_POST['bookingDate'], $_POST['bookingTime'], $_POST['fromAddress'], $_POST['toAddress'], $_POST['numberOfPeople'], $_POST['amount'])){
 	$userId = $_SESSION['userID'];
 	$bookingDate = filter_input(INPUT_POST, 'bookingDate', FILTER_SANITIZE_STRING);
-	$customerNo = filter_input(INPUT_POST, 'customerNo', FILTER_SANITIZE_STRING);
 	$bookingTime = filter_input(INPUT_POST, 'bookingTime', FILTER_SANITIZE_STRING);
 	$fromAddress = filter_input(INPUT_POST, 'fromAddress', FILTER_SANITIZE_STRING);
 	$toAddress = filter_input(INPUT_POST, 'toAddress', FILTER_SANITIZE_STRING);
 	$numberOfPeople = filter_input(INPUT_POST, 'numberOfPeople', FILTER_SANITIZE_STRING);
 	$amount = filter_input(INPUT_POST, 'amount', FILTER_SANITIZE_STRING);
+	$manualCustomer = filter_input(INPUT_POST, 'manualCustomer', FILTER_SANITIZE_STRING);
+	$manualDriver = filter_input(INPUT_POST, 'manualDriver', FILTER_SANITIZE_STRING);
+	$manualVehicle = filter_input(INPUT_POST, 'manualVehicle', FILTER_SANITIZE_STRING);
 
 	$contactPerson = null;
 	$contactNumber = null;
@@ -24,6 +26,23 @@ if(isset($_POST['bookingDate'], $_POST['customerNo'], $_POST['bookingTime'], $_P
 	$formattedTime = $dateTime2->format('H:i:s');
 	$dateTime = DateTime::createFromFormat('d/m/Y', $bookingDate);
 	$formattedDate = $dateTime->format('Y-m-d');
+
+	if(isset($_POST['customerNo']) && $_POST['customerNo'] != null && $_POST['customerNo'] != ''){
+		$customerNo = filter_input(INPUT_POST, 'customerNo', FILTER_SANITIZE_STRING);
+	}
+	else{
+		if ($insert_stmt = $db->prepare("INSERT INTO customers (customer_name, customer_address, customer_phone, pic) VALUES (?, ?, ?, ?)")) {
+            $name = $_POST['customerNoTxt'];
+			$address = '-';
+			$phone = '-';
+			$pic = '-';
+
+			$insert_stmt->bind_param('ssss', $name, $address, $phone, $pic);
+            $insert_stmt->execute();
+			$customerNo = $insert_stmt->insert_id;;
+			$insert_stmt->close();
+        }
+	}
 
 	if(isset($_POST['contactPerson']) && $_POST['contactPerson'] != null && $_POST['contactPerson'] != ''){
 		$contactPerson = filter_input(INPUT_POST, 'contactPerson', FILTER_SANITIZE_STRING);
@@ -40,9 +59,31 @@ if(isset($_POST['bookingDate'], $_POST['customerNo'], $_POST['bookingTime'], $_P
 	if(isset($_POST['driverNo']) && $_POST['driverNo'] != null && $_POST['driverNo'] != ''){
 		$driverNo = filter_input(INPUT_POST, 'driverNo', FILTER_SANITIZE_STRING);
 	}
+	else{
+		if($manualDriver != null && $manualDriver != '' && $manualDriver == "1" && $_POST['driverNoTxt'] != null &&  $_POST['driverNoTxt'] != ''){
+        	if ($insert_stmtD = $db->prepare("INSERT INTO transporters (transporter_name) VALUES (?)")) {
+				$driverName = $_POST['driverNoTxt']; // assign to a variable
+				$insert_stmtD->bind_param('s', $driverName);
+				$insert_stmtD->execute();
+				$driverNo = $insert_stmtD->insert_id;
+				$insert_stmtD->close();
+			}
+		}
+	}
 
 	if(isset($_POST['vehicleNo']) && $_POST['vehicleNo'] != null && $_POST['vehicleNo'] != ''){
 		$vehicleNo = filter_input(INPUT_POST, 'vehicleNo', FILTER_SANITIZE_STRING);
+	}
+	else{
+		if($manualVehicle != null && $manualVehicle != '' && $manualVehicle == "1" && $_POST['vehicleNoTxt'] != null &&  $_POST['vehicleNoTxt'] != ''){
+			if ($insert_stmtV = $db->prepare("INSERT INTO vehicles (veh_number) VALUES (?)")) {
+				$vehicleNumber = $_POST['vehicleNoTxt']; // assign to a variable
+				$insert_stmtV->bind_param('s', $vehicleNumber);
+				$insert_stmtV->execute();
+				$vehicleNo = $insert_stmtV->insert_id;
+				$insert_stmtV->close();
+			}
+		}
 	}
 
 	if(isset($_POST['remark']) && $_POST['remark'] != null && $_POST['remark'] != ''){
